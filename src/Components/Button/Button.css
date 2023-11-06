@@ -1,0 +1,32 @@
+.button {
+    min-width: 50px;
+    margin: 10px;
+    padding: 10px;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.primary {
+    color: white;
+    background-color: blue;
+}
+
+.secondary {
+    color: white;
+    background-color: chocolate;
+}
+
+.outlined {
+    color: black;
+    background-color: white;
+}
+
+.primary.outlined {
+    border: 2px solid blue;
+}
+
+.secondary.outlined {
+    border: 2px solid chocolate;
+}
