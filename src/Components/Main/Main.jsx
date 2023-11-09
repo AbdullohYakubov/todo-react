@@ -1,50 +1,77 @@
-import React from "react"
+import React from "react";
 
-import Todo from "../Todo/Todo"
+import Todo from "../Todo/Todo";
 
-import "../Button/Button.css"
-import "./Main.css"
+import "../Button/Button.css";
+import "./Main.css";
 
 function Main() {
     const [todos, setTodos] = React.useState([
         {
             id: 0,
             title: "Wake up at 7",
-            isCompleted: false
+            isCompleted: false,
         },
 
         {
             id: 1,
-            title: "Wake up at 7",
-            isCompleted: false
-        }
-    ])
+            title: "Breakfast at 7:30",
+            isCompleted: false,
+        },
+    ]);
+
+    const handleDelete = (evt) => {
+        const todoId = evt.target.dataset.todoId;
+        const filteredTodos = todos.filter((todo) => todo.id != todoId);
+        setTodos(filteredTodos);
+    };
+
+    const handleCheckTodo = (evt) => {
+        const todoId = evt.target.dataset.todoId;
+        // const findTodo = todos.filter(todo => todo.id == todoId)
+        // findTodo[0].isCompleted = !findTodo[0].isCompleted
+        const foundTodo = todos.find(todo => todo.id == todoId)
+        foundTodo.isCompleted = !foundTodo.isCompleted
+        setTodos([...todos])
+    };
 
     return (
         <main className="main">
-            <input type="text" onKeyUp={(evt) => {
-                if (evt.code === "Enter") {
-                    let newTodoTitle = evt.target.value
+            <input
+                type="text"
+                onKeyUp={(evt) => {
+                    if (evt.code === "Enter") {
+                        if (!evt.target.value) {
+                            return;
+                        } else {
+                            const newTodo = {
+                                id: todos[todos.length - 1]?.id + 1 || 0,
+                                title: evt.target.value.trim(),
+                                isCompleted: false,
+                            };
 
-                    const newTodo = {
-                        id: todos[todos.length - 1]?.id + 1 || 0,
-                        title: newTodoTitle.trim(),
-                        isCompleted: false
+                            setTodos([...todos, newTodo]);
+
+                            evt.target.value = null;
+                        }
                     }
-
-                    setTodos([...todos, newTodo])
-
-                    newTodoTitle = null
-                }
-            }} />
+                }}
+            />
 
             <ul className="todos">
-                {todos.map((todo) => <Todo className="todo" key={todo.id}>
-                    {todo.title}
-                </Todo>)}
+                {todos.map((todo) => (
+                    <Todo
+                        className="todo"
+                        key={todo.id}
+                        todo={todo}
+                        handleDelete={handleDelete}
+                        handleCheckTodo={handleCheckTodo}>
+                        {todo.title}
+                    </Todo>
+                ))}
             </ul>
         </main>
-    )
+    );
 }
 
-export default Main
+export default Main;
