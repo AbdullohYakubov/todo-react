@@ -6,33 +6,45 @@ import "../Button/Button.css";
 import "./Main.css";
 
 function Main() {
-    const [todos, setTodos] = React.useState([
-        {
-            id: 0,
-            title: "Wake up at 7",
-            isCompleted: false,
-        },
+    const [todos, setTodos] = React.useState(
+        JSON.parse(localStorage.getItem("todos")) || []
+    );
+    const [type, setType] = React.useState(localStorage.getItem("type") || "all");
 
-        {
-            id: 1,
-            title: "Breakfast at 7:30",
-            isCompleted: false,
-        },
-    ]);
-
-    const handleDelete = (evt) => {
-        const todoId = evt.target.dataset.todoId;
-        const filteredTodos = todos.filter((todo) => todo.id != todoId);
+    const handleDeleteTodo = (evt) => {
+        const todoId = Number(evt.target.dataset.todoId);
+        const filteredTodos = todos.filter((todo) => todo.id !== todoId);
         setTodos(filteredTodos);
+        localStorage.setItem("todos", JSON.stringify(filteredTodos));
     };
 
     const handleCheckTodo = (evt) => {
-        const todoId = evt.target.dataset.todoId;
-        // const findTodo = todos.filter(todo => todo.id == todoId)
-        // findTodo[0].isCompleted = !findTodo[0].isCompleted
-        const foundTodo = todos.find(todo => todo.id == todoId)
-        foundTodo.isCompleted = !foundTodo.isCompleted
-        setTodos([...todos])
+        const todoId = Number(evt.target.dataset.todoId);
+        const foundTodo = todos.find((todo) => todo.id === todoId);
+        foundTodo.isCompleted = !foundTodo.isCompleted;
+        setTodos([...todos]);
+        localStorage.setItem("todos", JSON.stringify([...todos]));
+    };
+
+    const getTodosByType = (_type, _todos) => {
+        if (_type === "all") {
+            return _todos;
+        }
+
+        if (_type === "active") {
+            return _todos.filter((todo) => !todo.isCompleted);
+        }
+
+        if (_type === "completed") {
+            return _todos.filter((todo) => todo.isCompleted);
+        } else {
+            return [];
+        }
+    };
+
+    const saveTypeToLocalStorage = (_type) => {
+        setType(_type);
+        localStorage.setItem("type", _type);
     };
 
     return (
@@ -44,32 +56,67 @@ function Main() {
                         if (!evt.target.value) {
                             return;
                         } else {
-                            const newTodo = {
-                                id: todos[todos.length - 1]?.id + 1 || 0,
-                                title: evt.target.value.trim(),
-                                isCompleted: false,
-                            };
+                            if (type !== "all") {
+                                setType("all");
 
-                            setTodos([...todos, newTodo]);
+                                const newTodo = {
+                                    id: todos[todos.length - 1]?.id + 1 || 0,
+                                    title: evt.target.value.trim(),
+                                    isCompleted: false,
+                                };
 
-                            evt.target.value = null;
+                                setTodos([...todos, newTodo]);
+
+                                localStorage.setItem(
+                                    "todos",
+                                    JSON.stringify([...todos, newTodo])
+                                );
+
+                                evt.target.value = null;
+                            } else {
+                                const newTodo = {
+                                    id: todos[todos.length - 1]?.id + 1 || 0,
+                                    title: evt.target.value.trim(),
+                                    isCompleted: false,
+                                };
+
+                                setTodos([...todos, newTodo]);
+
+                                localStorage.setItem(
+                                    "todos",
+                                    JSON.stringify([...todos, newTodo])
+                                );
+
+                                evt.target.value = null;
+                            }
                         }
                     }
                 }}
             />
 
             <ul className="todos">
-                {todos.map((todo) => (
-                    <Todo
-                        className="todo"
-                        key={todo.id}
-                        todo={todo}
-                        handleDelete={handleDelete}
-                        handleCheckTodo={handleCheckTodo}>
-                        {todo.title}
-                    </Todo>
-                ))}
+                {todos.length > 0 &&
+                    getTodosByType(type, todos).map((todo) => (
+                        <Todo
+                            className="todo"
+                            key={todo.id}
+                            todo={todo}
+                            handleDeleteTodo={handleDeleteTodo}
+                            handleCheckTodo={handleCheckTodo}>
+                            {todo.title}
+                        </Todo>
+                    ))}
             </ul>
+
+            <button type="button" onClick={() => saveTypeToLocalStorage("all")}>
+                All
+            </button>
+            <button type="button" onClick={() => saveTypeToLocalStorage("active")}>
+                Active
+            </button>
+            <button type="button" onClick={() => saveTypeToLocalStorage("completed")}>
+                Completed
+            </button>
         </main>
     );
 }
