@@ -48,75 +48,98 @@ function Main() {
     };
 
     return (
-        <main className="main">
-            <input
-                type="text"
-                onKeyUp={(evt) => {
-                    if (evt.code === "Enter") {
-                        if (!evt.target.value) {
-                            return;
-                        } else {
-                            if (type !== "all") {
-                                setType("all");
+        <main className="container">
+            <section className="todo">
+                <h1 className="todo__label">todos</h1>
 
-                                const newTodo = {
-                                    id: todos[todos.length - 1]?.id + 1 || 0,
-                                    title: evt.target.value.trim(),
-                                    isCompleted: false,
-                                };
+                <div className="todo__wrapper">
+                    <input
+                        className="todo__input"
+                        type="text"
+                        onKeyUp={(evt) => {
+                            if (evt.code === "Enter") {
+                                if (!evt.target.value) {
+                                    return;
+                                } else {
+                                    if (type !== "all") {
+                                        setType("all");
 
-                                setTodos([...todos, newTodo]);
+                                        const newTodo = {
+                                            id: todos[todos.length - 1]?.id + 1 || 0,
+                                            title: evt.target.value.trim(),
+                                            isCompleted: false,
+                                        };
 
-                                localStorage.setItem(
-                                    "todos",
-                                    JSON.stringify([...todos, newTodo])
-                                );
+                                        setTodos([...todos, newTodo]);
 
-                                evt.target.value = null;
-                            } else {
-                                const newTodo = {
-                                    id: todos[todos.length - 1]?.id + 1 || 0,
-                                    title: evt.target.value.trim(),
-                                    isCompleted: false,
-                                };
+                                        localStorage.setItem(
+                                            "todos",
+                                            JSON.stringify([...todos, newTodo])
+                                        );
 
-                                setTodos([...todos, newTodo]);
+                                        evt.target.value = null;
+                                    } else {
+                                        const newTodo = {
+                                            id: todos[todos.length - 1]?.id + 1 || 0,
+                                            title: evt.target.value.trim(),
+                                            isCompleted: false,
+                                        };
 
-                                localStorage.setItem(
-                                    "todos",
-                                    JSON.stringify([...todos, newTodo])
-                                );
+                                        setTodos([...todos, newTodo]);
 
-                                evt.target.value = null;
+                                        localStorage.setItem(
+                                            "todos",
+                                            JSON.stringify([...todos, newTodo])
+                                        );
+
+                                        evt.target.value = null;
+                                    }
+                                }
                             }
-                        }
-                    }
-                }}
-            />
+                        }}
+                    />
 
-            <ul className="todos">
-                {todos.length > 0 &&
-                    getTodosByType(type, todos).map((todo) => (
-                        <Todo
-                            className="todo"
-                            key={todo.id}
-                            todo={todo}
-                            handleDeleteTodo={handleDeleteTodo}
-                            handleCheckTodo={handleCheckTodo}>
-                            {todo.title}
-                        </Todo>
-                    ))}
-            </ul>
+                    <ul className="todo__list">
+                        {todos.length > 0 &&
+                            getTodosByType(type, todos).map((todo) => (
+                                <Todo
+                                    className="todo"
+                                    key={todo.id}
+                                    todo={todo}
+                                    handleDeleteTodo={handleDeleteTodo}
+                                    handleCheckTodo={handleCheckTodo}>
+                                    {todo.title}
+                                </Todo>
+                            ))}
+                    </ul>
 
-            <button type="button" onClick={() => saveTypeToLocalStorage("all")}>
-                All
-            </button>
-            <button type="button" onClick={() => saveTypeToLocalStorage("active")}>
-                Active
-            </button>
-            <button type="button" onClick={() => saveTypeToLocalStorage("completed")}>
-                Completed
-            </button>
+                    <div className="todo__navbar">
+                        <div className="todo__navbar--wrapper">
+                            <button className="todo__all" type="button" onClick={() => saveTypeToLocalStorage("all")}>
+                                <strong>
+                                    <span>All</span>
+                                </strong>
+                            </button>
+
+                            <button className="todo__active"
+                                type="button"
+                                onClick={() => saveTypeToLocalStorage("active")}>
+                                <strong>
+                                    <span>Active</span>
+                                </strong>
+                            </button>
+
+                            <button className="todo__completed"
+                                type="button"
+                                onClick={() => saveTypeToLocalStorage("completed")}>
+                                <strong>
+                                    <span>Completed</span>
+                                </strong>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     );
 }
